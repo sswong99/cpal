@@ -7,11 +7,13 @@ import axios from "axios";
 import useChatInfoStore from "../../stores/chatStore.js";
 import { useSessionStorage } from "../../hooks/useSessionStorage.js";
 import { useLocalStorage } from "../../hooks/useLocalStorage.js";
+import { useChat } from "../lib/useChat.js";
 
 function Controller() {
-  const [isSendChatLoading, setIsSendChatLoading] = useState(false);
-  const [isGetChatLoading, setIsGetChatLoading] = useState(false);
-  const [responseStatus, setResponseStatus] = useState("");
+  const { isSendChatLoading, isGetChatLoading, sendMessage, responseStatus } = useChat()
+  // const [isSendChatLoading, setIsSendChatLoading] = useState(false);
+  // const [isGetChatLoading, setIsGetChatLoading] = useState(false);
+  // const [responseStatus, setResponseStatus] = useState("");
   const [fileObject, setFileObject] = useState();
   const [inputText, setInputText] = useState("");
   const [streamingResponse, setStreamingResponse] = useState("");
@@ -25,57 +27,58 @@ function Controller() {
   const router = useRouter();
   const chatId = router.query.id;
 
-  useEffect(() => {
-    let intervalId;
-    if (isSendChatLoading) {
-      //when you send a message
+  // useEffect(() => {
+  //   let intervalId;
+  //   if (isSendChatLoading) {
+  //     //when you send a message
 
-      intervalId = setInterval(async () => {
-        if (chatId) {
-          let chatStatus = await getChatStatus(chatId);
-          setResponseStatus(chatStatus);
-        }
-      }, 1000);
-    }
-    if (savedChatId !== chatId && chatId) {
-      //when you switch to another chat
-      console.log("tab swtiched");
-      setChatArray([]);
-      getChatMessages(chatId);
-      setSavedChatId(chatId);
-    }
+  //     intervalId = setInterval(async () => {
+  //       if (chatId) {
+  //         let chatStatus = await getChatStatus(chatId);
+  //         setResponseStatus(chatStatus);
+  //       }
+  //     }, 1000);
+  //   }
+  //   if (savedChatId !== chatId && chatId) {
+  //     //when you switch to another chat
+  //     console.log("tab swtiched");
+  //     setChatArray([]);
+  //     getChatMessages(chatId);
+  //     setSavedChatId(chatId);
+  //   }
 
-    if (savedChatId === chatId && chatArray.length === 0 && chatId) {
-      //when you refresh the page
-      getChatMessages(chatId);
-    }
+  //   if (savedChatId === chatId && chatArray.length === 0 && chatId) {
+  //     //when you refresh the page
+  //     getChatMessages(chatId);
+  //   }
 
-    console.log("chat list", chatArray);
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [chatId, savedChatId, isSendChatLoading]);
+  //   console.log("chat list", chatArray);
+  //   return () => {
+  //     if (intervalId) {
+  //       clearInterval(intervalId);
+  //     }
+  //   };
+  // }, [chatId, savedChatId, isSendChatLoading]);
 
   const sendMessageClick = async () => {
-    console.log("chekcing: ", isSendChatLoading);
-    setIsSendChatLoading(true);
-    const currentInputText = inputText;
-    let chatId = router.query.id;
-    setStreamingResponse("");
-    setInputText("");
+    sendMessage(inputText)
+    // console.log("chekcing: ", isSendChatLoading);
+    // setIsSendChatLoading(true);
+    // const currentInputText = inputText;
+    // let chatId = router.query.id;
+    // setStreamingResponse("");
+    // setInputText("");
 
-    if (!chatId) {
-      console.log("ChatId not found");
-      await setNewChatId();
+    // if (!chatId) {
+    //   console.log("ChatId not found");
+    //   await setNewChatId();
 
-      chatId = router.query.id;
-    }
+    //   chatId = router.query.id;
+    // }
 
-    if (chatId) {
-      sendMessageGivenChatId(currentInputText);
-    }
+    // if (chatId) {
+    //   sendMessageGivenChatId(currentInputText);
+    // }
   };
 
   const getSourceStatus = async () => {
@@ -201,22 +204,22 @@ function Controller() {
     }
   };
 
-  async function getChatStatus(chatId) {
-    try {
-      const response = await axios.get(
-        `/api/chatbot/getChatStatus?chat_id=${chatId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken || ""}`,
-          },
-        }
-      );
-      const chatStatus = response.data.chatStatus;
-      return chatStatus;
-    } catch (error) {
-      return "";
-    }
-  }
+  // async function getChatStatus(chatId) {
+  //   try {
+  //     const response = await axios.get(
+  //       `/api/chatbot/getChatStatus?chat_id=${chatId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken || ""}`,
+  //         },
+  //       }
+  //     );
+  //     const chatStatus = response.data.chatStatus;
+  //     return chatStatus;
+  //   } catch (error) {
+  //     return "";
+  //   }
+  // }
 
   async function displayRelevantFile(chatId, inputText, aiResponse) {
     let clientId = currentClient.uuid;
