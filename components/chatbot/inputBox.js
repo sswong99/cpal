@@ -109,7 +109,7 @@ function InputBoxComponent({
                       ? "Wait a second...."
                       : "Type your message..."
                   }
-                  value={inputText}
+                  // value={inputText}
                   disabled={isSendChatLoading}
                   onChange={handleInputChange}
                   onKeyDown={handleEnter}

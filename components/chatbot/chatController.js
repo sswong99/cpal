@@ -43,7 +43,7 @@ function ChatController({
   const { docId } = router.query;
   const [accessToken, setAccessToken] = useSessionStorage("accessToken", "");
   const [firstLetter, setFirstLetter] = useState("");
-  const [usernameExtracted, setUsernameExtracted] = useState("");
+  // const [usernameExtracted, setUsernameExtracted] = useState("");
 
   useEffect(() => {
     if (user) {
